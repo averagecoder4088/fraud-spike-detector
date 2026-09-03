@@ -328,16 +328,4 @@ final_prediction = base_value + Σ SHAP(feature_i)
 
 ---
 
-## Why This Architecture Wins
-
-1. **Production-ready thinking**: Not just a model, but a system (validation, explainability, monitoring)
-2. **Security awareness**: Fail-fast design, adversarial input handling
-3. **Business alignment**: F2-score reflects real fraud cost vs. customer friction tradeoff
-4. **Explainability**: SHAP for regulatory compliance and analyst trust
-5. **Scalability**: Clear path from demo to production (latency budget, throughput estimates)
-
-**Judges will see**: This team understands the difference between a Kaggle notebook and a deployable system.
-
----
-
 **Built for Razorpay AI Buildathon 2026 Track 2: AI Risk Manager**
