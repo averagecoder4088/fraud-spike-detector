@@ -38,9 +38,9 @@ The app will open in your browser at `http://localhost:8501`
 2. Go to share.streamlit.io and connect the repo
 3. Deploy
 
-**Note:** verify `requirements.txt` installs cleanly on Streamlit Cloud (Ubuntu) before submitting — if it's still pinned to exact local versions, loosen pins to `>=` ranges for the packages above so Cloud's resolver isn't fighting your macOS-arm64-specific versions.
+`requirements.txt` is deploy-tested and live at [your app's .streamlit.app URL].
 
 ## Notes
-- Local development is set up for macOS arm64 + Python 3.13 via conda.
-- Streamlit Cloud installs from `requirements.txt` via pip on Ubuntu — this is a different environment from local, so test a fresh deploy before submission rather than assuming parity.
+- Local development is set up for macOS arm64 + Python 3.13 via conda, using the package versions above.
+- Streamlit Cloud installs from `requirements.txt` via pip on Ubuntu — a separate environment from local, pinned to versions confirmed working on that platform (they don't need to match the local conda versions above exactly).
 - Model files (`fraud_model.pkl`, `test_data.pkl`) are committed directly to the repo rather than via Git LFS — fine for a hackathon submission where judges need to clone and run immediately.
