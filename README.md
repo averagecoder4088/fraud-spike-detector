@@ -93,6 +93,10 @@ Push to GitHub → connect the repo at share.streamlit.io → deploy. `requireme
 
 **Fail-fast validation.** Malformed input is often a probe, not noise — attackers test invalid inputs to find weaknesses. The system flags for review rather than guessing.
 
+## Development Process
+
+Built by specifying the architecture, validation logic, and model decisions myself; used AI (Claude) to generate implementation code and assist with Streamlit Cloud deployment debugging. Full breakdown in PITCH.md.
+
 ## Security & Production Considerations
 
 - **Input validation** is a defense-in-depth layer against adversarial/malformed input; every flagged transaction gets a structured, JSON-logged reason; nothing is silently imputed.
