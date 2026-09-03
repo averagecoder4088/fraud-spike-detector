@@ -39,8 +39,6 @@
 - Detects coordinated bursts traditional scoring misses
 - **12 spikes** caught in test data
 
-### Why This Wins
-> "Most fraud systems are either accurate OR fast. This is both — under 1ms inference, 87.6% F1-score."
 
 **Visual**: Architecture diagram (animated flow from input → validation → classifier → spike detection → alert)
 
@@ -130,7 +128,7 @@
 
 > "This isn't a Kaggle notebook. This is a deployable system with documentation, failure handling, and security awareness. Ready to catch fraud on day one."
 
-**Final Slide**: GitHub repo link + "Ready to deploy. Ready to win." 🚀
+**Final Slide**: GitHub repo link
 
 ---
 
@@ -179,3 +177,22 @@ A: REST API wrapping the model. Input: transaction JSON, Output: {fraud_prob, sh
 ---
 
 **Record. Review. Win.** 🎥🏆
+
+## Development Process & AI Use
+
+Built by specifying the architecture, validation logic, and model decisions myself, then using AI (Claude) to generate implementation code and help debug Streamlit Cloud deployment. Specifically, I:
+- Chose the F2-score objective over accuracy/F1, based on the cost asymmetry between missed fraud and false positives
+- Directed a head-to-head comparison of LightGBM vs. XGBoost and picked LightGBM on precision/recall/F1/false-positive count
+- Designed the two-layer architecture (per-transaction classifier + spike detection)
+- Specified the fail-fast input validation design
+- Found and specified fixes for two real bugs in the spike detector: the rolling baseline leaking the current window into itself (fixed with `.shift(1)`), and near-zero-variance windows producing absurd z-scores (fixed with a `MIN_STD=0.0003` floor)
+
+## Failure Recovery: Deployment
+
+Streamlit Cloud's build environment silently ran Python 3.14 despite `runtime.txt` and Advanced Settings both specifying an older version — a currently-known platform bug, not a config error on my end. That broke Pillow, a transitive dependency of an older pinned Streamlit version with no prebuilt wheel for 3.14, which failed trying to compile from source. I diagnosed it from the build log (missing zlib headers during a source build), traced it to the version mismatch, and got the app running by working through the dependency chain.
+
+## Submission Checklist
+- [ ] GitHub repo URL
+- [ ] Live Streamlit Cloud URL (both required for Track 2)
+- [ ] 5-minute video (screen recording, not live demo)
+- [ ] Pitch deck (optional)
