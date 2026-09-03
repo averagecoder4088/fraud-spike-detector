@@ -38,7 +38,7 @@ The app will open in your browser at `http://localhost:8501`
 2. Go to share.streamlit.io and connect the repo
 3. Deploy
 
-`requirements.txt` is deploy-tested and live at [your app's .streamlit.app URL].
+`requirements.txt` is deploy-tested and live at https://fraud-spike-detector-8asd5vaa5498vbphprq7be.streamlit.app/.
 
 ## Notes
 - Local development is set up for macOS arm64 + Python 3.13 via conda, using the package versions above.
