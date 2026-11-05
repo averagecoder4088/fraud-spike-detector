@@ -99,6 +99,21 @@ MIN_STD = 0.0003  # Prevents division by zero in quiet periods
 
 ---
 
+## Analytics Layer
+
+**Decision**: Add a SQL view layer over the scored test set, exported as flat CSVs for Tableau
+
+**Rationale**:
+- **SQL views**: Outcome, amount-band, hourly and per-window questions (including money attached to each outcome) are naturally set-based queries; views keep the definitions reviewable and portable (standard SQL, runs on SQLite and PostgreSQL)
+- **Flat CSV**: Tableau Public supports file connections only, not live databases, so `analytics/export_for_tableau.py` rebuilds the views in SQLite and writes CSVs to `analytics/tableau_data/`
+
+**What it does not do**:
+- No live data: it reads the static `test_data.pkl`
+- No scoring of new transactions
+- No retraining or model changes
+
+---
+
 ## Input Validation Strategy
 
 **Decision**: Fail-fast with explicit flagging instead of imputation or silent fallback

@@ -32,6 +32,16 @@ The app will open in your browser at `http://localhost:8501`
 3. **Transaction Detail** (`pages/2_Transaction_Detail.py`) — SHAP explainability
 4. **Failure Demo** (`pages/3_Failure_Demo.py`) — Input validation testing
 
+## Regenerating Analytics Data (optional)
+
+To rebuild the SQL views and the Tableau CSVs from the project root:
+
+```bash
+python analytics/export_for_tableau.py
+```
+
+This reads `test_data.pkl` (and `fraud_model.pkl` for feature importance), and rewrites `analytics/tableau_data/`. Uses only the packages above plus the standard-library `sqlite3`. Not needed to run the app.
+
 ## Deploying to Streamlit Community Cloud
 
 1. Push this repo to GitHub (public)

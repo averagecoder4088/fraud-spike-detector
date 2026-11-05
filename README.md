@@ -83,6 +83,22 @@ Push to GitHub → connect the repo at share.streamlit.io → deploy. `requireme
 3. **Transaction Detail** (`pages/2_Transaction_Detail.py`) — SHAP force/waterfall plots, per-transaction explainability, filterable by All / Flagged / TP / FP / FN
 4. **Failure Demo** (`pages/3_Failure_Demo.py`) — input validation test cases and a custom transaction builder
 
+## Analytics Layer (SQL + Tableau-ready data)
+A SQL and BI-prep layer over the scored test set, for dashboarding in Tableau. It is offline analysis of the 56,962 test transactions, separate from the Streamlit app.
+
+- **6 SQL views** (`analytics/sql/views.sql`, CTEs + window functions, SQLite/PostgreSQL-compatible): `v_outcome_summary`, `v_hourly`, `v_amount_band`, `v_window_running`, `v_top_risk_per_window`, `v_missed_frauds`
+- **Export script** (`analytics/export_for_tableau.py`) rebuilds the 30-minute spike windows, loads everything into SQLite, builds the views and writes 9 flat CSVs to `analytics/tableau_data/` (Tableau Public file connections)
+- **Regenerate** from the project root: `python analytics/export_for_tableau.py`
+
+Headline findings:
+- Model caught 85 of 98 frauds (missed 13, 11 false alarms). By value it caught $8,814 and missed $1,831, about 83% by value vs 86.7% by count
+- 3 missed frauds in the $200–1000 band account for $1,684, about 92% of missed value
+- 12 of 96 thirty-minute windows flagged as spikes (spike detection runs on the model's flagged rate)
+
+Caveats: "hour of day" is hours since the start of the 2-day capture (mod 24), not a clock hour. V1–V28 are anonymised, so there are no merchant or category cuts.
+
+Status: the Tableau dashboard is not built yet. The design is in `analytics/TABLEAU_GUIDE.md`.
+
 ## Key Technical Decisions
 
 **F2-score over accuracy/F1.** A missed fraud (false negative) costs $100–500; a blocked legitimate transaction (false positive) is customer friction but reversible. F2 weights recall 2× over precision, matching that asymmetry.
@@ -153,6 +169,11 @@ fraud_spike_detector/
 │   ├── 2_Transaction_Detail.py
 │   └── 3_Failure_Demo.py
 ├── validation.py
+├── analytics/
+│   ├── sql/views.sql               # 6 SQL views
+│   ├── export_for_tableau.py       # Rebuilds views, exports CSVs
+│   ├── tableau_data/               # 9 CSVs for Tableau
+│   └── TABLEAU_GUIDE.md            # Dashboard design
 ├── fraud_model.pkl                 # Trained LightGBM model (2.5 MB)
 ├── test_data.pkl                   # Test set + predictions (15.5 MB)
 ├── requirements.txt
