@@ -209,7 +209,7 @@ final_prediction = base_value + Σ SHAP(feature_i)
 **Handling Imbalance**:
 1. **Class weighting**: LightGBM's `class_weight='balanced'` → weights fraud 578× more
 2. **F2-score objective**: Penalizes false negatives more than false positives
-3. **Threshold tuning**: Default 0.5 → adjusted to 0.3 based on PR curve
+3. **Decision threshold**: kept at the default 0.5. The saved test predictions are reproduced exactly at 0.5; lowering it to 0.3 would flag 99 transactions instead of 96 with no gain in recall (precision 85.9% vs 88.5%). The Analytics page's cost what-if lets you explore other thresholds
 4. **SMOTE rejected**: Synthetic oversampling risks overfitting to noise with only 492 fraud examples
 
 ---
