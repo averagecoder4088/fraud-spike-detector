@@ -46,3 +46,12 @@ wheels/
 
 # Logs
 *.log
+
+# Analytics layer (regenerate with analytics/export_for_tableau.py)
+analytics/*.db
+
+# Secrets and local-only directories
+.env
+.env.*
+resume/
+jobrank/
