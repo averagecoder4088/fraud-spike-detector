@@ -80,13 +80,15 @@ tab1, tab2, tab3, tab4 = st.tabs(
 
 # ---------- Tab 1: Overview ----------
 with tab1:
-    c = st.columns(6)
-    c[0].metric("Transactions", f"{n_txn:,}")
-    c[1].metric("Frauds", f"{n_fraud:,}")
-    c[2].metric("Caught", f"{n_caught:,}")
-    c[3].metric("Missed", f"{n_missed:,}")
-    c[4].metric("False alarms", f"{n_fp:,}")
-    c[5].metric("Dollar Recall", f"{dollar_recall:.1%}")
+    # Two rows of three so values are not truncated on narrower screens
+    r1 = st.columns(3)
+    r1[0].metric("Transactions", f"{n_txn:,}")
+    r1[1].metric("Frauds", f"{n_fraud:,}")
+    r1[2].metric("Caught", f"{n_caught:,}")
+    r2 = st.columns(3)
+    r2[0].metric("Missed", f"{n_missed:,}")
+    r2[1].metric("False alarms", f"{n_fp:,}")
+    r2[2].metric("Dollar Recall", f"{dollar_recall:.1%}")
 
     left, right = st.columns(2)
     with left:
@@ -273,12 +275,13 @@ with tab4:
         st.caption("No threshold in 0.01-0.99 reproduces the file's pred_fraud column exactly.")
 
     flags, precision, recall, missed_amt, net = evaluate(thr, review_cost, mult)
-    m = st.columns(5)
-    m[0].metric("Precision", f"{precision:.1%}")
-    m[1].metric("Recall", f"{recall:.1%}")
-    m[2].metric("Flags", f"{flags:,}")
-    m[3].metric("Missed fraud $", f"${missed_amt:,.2f}")
-    m[4].metric("Net Cost", f"${net:,.2f}")
+    m1 = st.columns(3)
+    m1[0].metric("Precision", f"{precision:.1%}")
+    m1[1].metric("Recall", f"{recall:.1%}")
+    m1[2].metric("Flags", f"{flags:,}")
+    m2 = st.columns(3)
+    m2[0].metric("Missed fraud $", f"${missed_amt:,.2f}")
+    m2[1].metric("Net Cost", f"${net:,.2f}")
     st.caption("Net Cost = loss multiplier x missed fraud $ + review cost per flag x flags.")
 
     grid = np.round(np.arange(0.01, 1.0, 0.01), 2)
