@@ -48,7 +48,7 @@ Alert System (Dashboard)
 Five checks run before prediction: missing features, null values, type mismatches, out-of-range values, non-finite values. On failure, the transaction is flagged for manual review — no imputing, no silent failures.
 
 ## Tech Stack
-- Model: LightGBM 4.6.0, tuned with Optuna (1000 trials, F2 objective)
+- Model: LightGBM 4.6.0, tuned with Optuna (30 trials, 5-fold stratified CV, F2 objective)
 - Explainability: SHAP 0.52.0 (TreeExplainer)
 - Frontend: Streamlit 1.51.0
 - Data/ML: Pandas 2.3.3, NumPy 2.3.5, scikit-learn 1.7.2
@@ -127,19 +127,20 @@ Built by specifying the architecture, validation logic, and model decisions myse
 - Only uses transaction time, not behavioral/velocity features (time since last transaction, device consistency).
 
 ## Model Training
-Training code: `fraud_detection_model.ipynb` (run on Kaggle). Covers Optuna search (1000 trials, F2 objective), class weight balancing, cross-validation, and SHAP caching.
+Training notebook: `razorpay.ipynb` (run on Kaggle; not included in this repo). Covers an 80/20 stratified train/test split, Optuna search (30 trials, 5-fold stratified CV, F2 objective) for LightGBM and for a tuned XGBoost baseline, class weight balancing, a threshold sweep, and SHAP. On the held-out test set LightGBM scored precision 0.885, recall 0.867, F1 0.876, PR-AUC 0.886 versus 0.854, 0.837, 0.845, 0.875 for XGBoost.
 
-Selected hyperparameters:
+Selected hyperparameters (as stored in `fraud_model.pkl`):
 ```python
 {
-    'max_depth': 8,
-    'num_leaves': 150,
-    'min_child_samples': 20,
-    'learning_rate': 0.05,
-    'n_estimators': 500,
-    'subsample': 0.8,
-    'colsample_bytree': 0.9,
-    'objective': 'binary',
+    'num_leaves': 74,
+    'max_depth': 10,
+    'learning_rate': 0.133,
+    'n_estimators': 360,
+    'min_child_samples': 100,
+    'subsample': 0.993,
+    'colsample_bytree': 0.825,
+    'reg_alpha': 0.061,
+    'reg_lambda': 6.69,
     'class_weight': 'balanced'
 }
 ```

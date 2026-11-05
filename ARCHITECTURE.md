@@ -45,22 +45,25 @@ else:
 | Model | Pros | Cons | Why Not? |
 |-------|------|------|----------|
 | **LightGBM** | Fast training, handles imbalance well, SHAP-compatible, low inference latency | Needs hyperparameter tuning | ✅ **Selected** |
-| XGBoost | Slightly better accuracy on some benchmarks | Slower training, higher memory | LightGBM matches performance at 3× speed |
+| XGBoost | Strong general-purpose baseline | Tuned with the same Optuna setup it scored lower on the held-out test set (F1 0.845 vs 0.876, PR-AUC 0.875 vs 0.886; single split) | LightGBM selected on measured results |
 | Random Forest | Simpler, less tuning | Slower inference, larger model size | 10× slower inference (10ms vs 1ms) |
 | Neural Network | Can learn complex patterns | Needs massive data (we have 284K, not 284M), harder to interpret | Imbalance (0.172%) kills NN performance |
 
 **Hyperparameter Strategy**: Optuna with F2-score objective
 
 ```python
-# Key hyperparameters (Optuna-selected after 1000 trials)
+# Best hyperparameters from the Optuna study (30 trials, 5-fold stratified CV, F2 objective),
+# as stored in fraud_model.pkl
 params = {
-    'max_depth': 8,              # Prevents overfitting on rare fraud patterns
-    'num_leaves': 150,           # Captures complex decision boundaries
-    'min_child_samples': 20,     # Avoids leaf nodes with <20 samples (noise)
-    'learning_rate': 0.05,       # Conservative learning (stable convergence)
-    'n_estimators': 500,         # Enough trees for ensemble strength
-    'subsample': 0.8,            # Row sampling (reduces overfitting)
-    'colsample_bytree': 0.9,     # Column sampling (feature diversity)
+    'num_leaves': 74,
+    'max_depth': 10,
+    'learning_rate': 0.133,
+    'n_estimators': 360,
+    'min_child_samples': 100,
+    'subsample': 0.993,
+    'colsample_bytree': 0.825,
+    'reg_alpha': 0.061,
+    'reg_lambda': 6.69,
     'class_weight': 'balanced'   # Handles 0.172% imbalance
 }
 ```
@@ -228,18 +231,21 @@ final_prediction = base_value + Σ SHAP(feature_i)
 **Search Space**:
 ```python
 {
-    'max_depth': [3, 15],           # Tree depth
-    'num_leaves': [20, 200],        # Leaf nodes per tree
-    'learning_rate': [0.01, 0.3],   # Gradient step size
-    'n_estimators': [100, 1000],    # Number of trees
-    'subsample': [0.5, 1.0],        # Row sampling ratio
-    'colsample_bytree': [0.5, 1.0]  # Column sampling ratio
+    'num_leaves': [15, 127],
+    'max_depth': [3, 12],
+    'learning_rate': [0.01, 0.3],      # log scale
+    'n_estimators': [100, 500],
+    'min_child_samples': [5, 100],
+    'subsample': [0.6, 1.0],
+    'colsample_bytree': [0.6, 1.0],
+    'reg_alpha': [1e-8, 10],           # log scale
+    'reg_lambda': [1e-8, 10]           # log scale
 }
 ```
 
-**Trials**: 1000 (diminishing returns after ~500, but full search for competition)
+**Trials**: 30 for LightGBM and 30 for the XGBoost baseline, each scored with 5-fold stratified cross-validation on the 80% training split
 
-**Objective**: Maximize F2-score on validation set (20% of training data)
+**Objective**: Maximize the mean F2-score across 5 stratified folds of the training data (80/20 stratified train/test split, `random_state=42`); the test set is used only for final evaluation
 
 ---
 
