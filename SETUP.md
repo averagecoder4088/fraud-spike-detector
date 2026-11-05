@@ -31,6 +31,7 @@ The app will open in your browser at `http://localhost:8501`
 2. **Live Monitor** (`pages/1_Live_Monitor.py`) — Transaction replay with spike detection
 3. **Transaction Detail** (`pages/2_Transaction_Detail.py`) — SHAP explainability
 4. **Failure Demo** (`pages/3_Failure_Demo.py`) — Input validation testing
+5. **Analytics** (`pages/4_Analytics.py`) — Dashboard over the analytics CSVs
 
 ## Regenerating Analytics Data (optional)
 

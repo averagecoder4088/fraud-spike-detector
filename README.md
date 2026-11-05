@@ -82,9 +82,10 @@ Push to GitHub → connect the repo at share.streamlit.io → deploy. `requireme
 2. **Live Monitor** (`pages/1_Live_Monitor.py`) — real-time transaction replay, fraud rate, spike alerts
 3. **Transaction Detail** (`pages/2_Transaction_Detail.py`) — SHAP force/waterfall plots, per-transaction explainability, filterable by All / Flagged / TP / FP / FN
 4. **Failure Demo** (`pages/3_Failure_Demo.py`) — input validation test cases and a custom transaction builder
+5. **Analytics** (`pages/4_Analytics.py`) — interactive dashboard over the scored test set: KPIs, fraud rate by hour, outcomes by amount band, spike windows, top missed frauds and a cost what-if
 
 ## Analytics Layer (SQL + Tableau-ready data)
-A SQL and BI-prep layer over the scored test set, for dashboarding in Tableau. It is offline analysis of the 56,962 test transactions, separate from the Streamlit app.
+A SQL and BI-prep layer over the scored test set, for dashboarding in Tableau. It is offline analysis of the 56,962 test transactions, separate from the model itself. The Analytics page in the app reads these CSVs.
 
 - **6 SQL views** (`analytics/sql/views.sql`, CTEs + window functions, SQLite/PostgreSQL-compatible): `v_outcome_summary`, `v_hourly`, `v_amount_band`, `v_window_running`, `v_top_risk_per_window`, `v_missed_frauds`
 - **Export script** (`analytics/export_for_tableau.py`) rebuilds the 30-minute spike windows, loads everything into SQLite, builds the views and writes 9 flat CSVs to `analytics/tableau_data/` (Tableau Public file connections)
@@ -97,7 +98,7 @@ Headline findings:
 
 Caveats: "hour of day" is hours since the start of the 2-day capture (mod 24), not a clock hour. V1–V28 are anonymised, so there are no merchant or category cuts.
 
-Status: the Tableau dashboard is not built yet. The design is in `analytics/TABLEAU_GUIDE.md`.
+Status: the dashboard is implemented as the Analytics page of the Streamlit app (`pages/4_Analytics.py`, built from `analytics/TABLEAU_GUIDE.md`). A Tableau Public workbook has not been built.
 
 ## Key Technical Decisions
 
@@ -167,7 +168,8 @@ fraud_spike_detector/
 ├── pages/
 │   ├── 1_Live_Monitor.py
 │   ├── 2_Transaction_Detail.py
-│   └── 3_Failure_Demo.py
+│   ├── 3_Failure_Demo.py
+│   └── 4_Analytics.py
 ├── validation.py
 ├── analytics/
 │   ├── sql/views.sql               # 6 SQL views
